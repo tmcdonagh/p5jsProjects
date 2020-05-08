@@ -8,15 +8,58 @@ let friction = -1.0;
 let balls = [];
 
 var images = [];
+var jsonImages = [];
+var jsonData;
+var testImage;
+var userCount = 0;
 
 function preload() {
+  // Test Server
+  //let url='https://discordapp.com/api/guilds/708095318591406080/widget.json';
+
+
+  // Tux Server
+  let url='https://discordapp.com/api/guilds/349352685239271429/widget.json';
+  jsonData = loadJSON(url);
+  console.log(jsonData);
+  //console.log(jsonData.name[0]);
+  /*
+  jsonData.members.forEach(function loadJson(item, index){
+    console.log(index);
+  });
+   */
+  
+  // Local storage images used for testing
+  /*
   for(var i = 0; i < 3; i++){
     images[i] = loadImage('img/image' + i + '.png');
   }
+  */
+
+
 }
 
 function setup() {
+  console.log(jsonData.members[0].avatar_url);
+  /*
+  console.log(jsonData.members);
+  jsonData.members.forEach(function loadJson(item, index, avatar_url){
+    console.log(index);
+    jsonImages[index] = createImage('https://cdn.discordapp.com/widget-avatars/YEr39nypC8Keh6AaGXOK2oPtKRS1k3EppC6ie6Z3ecU/80Oj2U2UDSutpp9rst3DBL6BVptj7mXchBYprLdhD0pXdQPDZVMidBvQ8JyrPCeYTUNrvRoz5fmogZVXv9l041e6s0jXdHAJRCuuWVM_4tRmbjV_EUDDQt9NElloljOUu4qajhJZr0PD6w');
+  });
+   */
   createCanvas(1366, 768);
+  numBalls = 0;
+  for(var i = 0; i < jsonData.members.length; i++){
+    userCount++;
+    numBalls++;
+    jsonImages[i] = loadImage(jsonData.members[i].avatar_url);
+  }
+  console.log(userCount);
+  //testImage = loadImage(jsonData.members[0].avatar_url);
+  testImage = jsonImages[0];
+  //console.log(testImage);
+  //testImage = loadImage('10.0.0.63/secondPortalTest/img/image0.png');
   for (let i = 0; i < numBalls; i++) {
     balls[i] = new Ball(
       random(width),
@@ -29,6 +72,7 @@ function setup() {
   }
   noStroke();
   fill(255, 204);
+
 }
 
 function draw() {
@@ -38,6 +82,7 @@ function draw() {
     ball.move();
     ball.display();
   });
+  //image(testImage , 100, 100);
 }
 
 class Ball {
@@ -49,7 +94,9 @@ class Ball {
     this.diameter = din;
     this.id = idin;
     this.others = oin;
-    this.imgNum = floor(random(0,3));
+    //this.imgNum = floor(random(0,images.length));
+    //this.imgNum = floor(random(0,jsonImages.length));
+    this.imgNum = this.id;
     //console.log(this.imgNum);
   }
 
@@ -99,7 +146,8 @@ class Ball {
 
   display() {
     imageMode(CENTER);
-    image(images[this.imgNum], this.x, this.y);
+    //image(images[this.imgNum], this.x, this.y);
+    image(jsonImages[this.imgNum], this.x, this.y);
     //ellipse(this.x, this.y, this.diameter, this.diameter);
   }
 }
